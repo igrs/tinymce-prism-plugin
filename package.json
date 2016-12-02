@@ -1,0 +1,17 @@
+{
+  "name": "tinymce-prism-plugin",
+  "version": "0.0.1",
+  "description": "This is Prism plugin for TinyMCE.",
+  "main": "plugin.js",
+  "repository": "https://github.com/igrs/tinymce-prism-plugin",
+  "author": "igrs",
+  "license": "MIT",
+  "peerDependencies": {
+    "tinymce": "^4.5.0"
+  },
+  "devDependencies": {
+    "ava": "^0.17.0",
+    "power-assert": "^1.4.2",
+    "webpack": "^1.13.3"
+  }
+}
