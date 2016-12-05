@@ -7,7 +7,7 @@
   "author": "igrs",
   "license": "MIT",
   "scripts": {
-    "build": "MINIFY_ENV=1 webpack",
+    "build": "MINIFY_ENV=1 webpack -p",
     "dev": "webpack",
     "test": "ava"
   },
