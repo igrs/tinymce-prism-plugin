@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.5.0/tinymce.min.js"></script>
+    <script src="./plugin.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/components/prism-elixir.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/components/prism-rust.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/components/prism-go.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/components/prism-crystal.js"></script>
+  </head>
+  <body>
+    <div>
+      <textarea></textarea>
+    </div>
+    <script>
+    const prism_languages = [
+      {text: 'HTML/XML', value: 'markup'},
+      {text: 'JavaScript', value: 'javascript'},
+      {text: 'CSS', value: 'css'},
+      {text: 'PHP', value: 'php'},
+      {text: 'Ruby', value: 'ruby'},
+      {text: 'Python', value: 'python'},
+      {text: 'Java', value: 'java'},
+      {text: 'C', value: 'c'},
+      {text: 'C#', value: 'csharp'},
+      {text: 'C++', value: 'cpp'},
+      {text: 'Elixir', value: 'elixir'},
+      {text: 'Rust', value: 'rust'},
+      {text: 'Go', value: 'go'},
+      {text: 'Crystal', value: 'crystal'},
+    ];
+    const prismUrl = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css';
+    tinymce.init({
+      selector: 'textarea',
+      plugins: 'prism',
+      toolbar: 'prism',
+      prism_languages: prism_languages,
+      prism_content_css_list: [prismUrl],
+    });
+    </script>
+  </body>
+</html>
