@@ -12,3 +12,6 @@ webpack.config.ava.js
 config.gypi
 CVS
 npm-debug.log
+index.html
+webpack.config.js
+yarn.lock
