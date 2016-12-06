@@ -4,48 +4,49 @@
     <meta charset="UTF-8">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.5.0/tinymce.min.js"></script>
     <script src="./plugin.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/components/prism-markup.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/components/prism-javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/components/prism-css.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/components/prism-php.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/components/prism-ruby.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/components/prism-python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/components/prism-java.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/components/prism-c.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/components/prism-cpp.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/components/prism-csharp.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/components/prism-elixir.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/components/prism-rust.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/components/prism-go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-markup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-ruby.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-c.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-csharp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-elixir.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-rust.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-go.min.js"></script>
   </head>
   <body>
     <div>
       <textarea></textarea>
     </div>
     <script>
-    const prism_languages = [
-      {text: 'HTML/XML', value: 'markup'},
-      {text: 'JavaScript', value: 'javascript'},
-      {text: 'CSS', value: 'css'},
-      {text: 'PHP', value: 'php'},
-      {text: 'Ruby', value: 'ruby'},
-      {text: 'Python', value: 'python'},
-      {text: 'Java', value: 'java'},
-      {text: 'C', value: 'c'},
-      {text: 'C#', value: 'csharp'},
-      {text: 'C++', value: 'cpp'},
-      {text: 'Elixir', value: 'elixir'},
-      {text: 'Rust', value: 'rust'},
-      {text: 'Go', value: 'go'},
-    ];
-    const prismUrl = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css';
-    tinymce.init({
-      selector: 'textarea',
-      plugins: 'prism',
-      toolbar: 'prism',
-      prism_languages: prism_languages,
-      prism_content_css_list: [prismUrl],
-    });
+      const prism_languages = [
+        {text: 'HTML/XML', value: 'markup'},
+        {text: 'JavaScript', value: 'javascript'},
+        {text: 'CSS', value: 'css'},
+        {text: 'PHP', value: 'php'},
+        {text: 'Ruby', value: 'ruby'},
+        {text: 'Python', value: 'python'},
+        {text: 'Java', value: 'java'},
+        {text: 'C', value: 'c'},
+        {text: 'C#', value: 'csharp'},
+        {text: 'C++', value: 'cpp'},
+        {text: 'Elixir', value: 'elixir'},
+        {text: 'Rust', value: 'rust'},
+        {text: 'Go', value: 'go'},
+      ];
+      const prismUrl = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css';
+      tinymce.init({
+        height : 'calc(100vh - 130px)',
+        selector: 'textarea',
+        plugins: 'prism',
+        toolbar: 'prism',
+        prism_languages: prism_languages,
+        prism_content_css_list: [prismUrl],
+      });
     </script>
   </body>
 </html>

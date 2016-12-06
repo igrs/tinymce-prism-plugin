@@ -127,11 +127,7 @@
 	    });
 
 	    editor.addCommand('prism', function () {
-	      if (editor.selection.isCollapsed()) {
-	        _dialog2.default.open(editor);
-	      } else {
-	        editor.formatter.toggle('code');
-	      }
+	      _dialog2.default.open(editor);
 	    });
 
 	    editor.addButton('prism', {
@@ -370,6 +366,9 @@
 			_.hooks.run('before-sanity-check', env);
 
 			if (!env.code || !env.grammar) {
+				if (env.code) {
+					env.element.textContent = env.code;
+				}
 				_.hooks.run('complete', env);
 				return;
 			}
@@ -447,9 +446,16 @@
 						lookbehindLength = 0,
 						alias = pattern.alias;
 
+					if (greedy && !pattern.pattern.global) {
+						// Without the global flag, lastIndex won't work
+						var flags = pattern.pattern.toString().match(/[imuy]*$/)[0];
+						pattern.pattern = RegExp(pattern.pattern.source, flags + "g");
+					}
+
 					pattern = pattern.pattern || pattern;
 
-					for (var i=0; i<strarr.length; i++) { // Don’t cache length as it changes during the loop
+					// Don’t cache length as it changes during the loop
+					for (var i=0, pos = 0; i<strarr.length; pos += strarr[i].length, ++i) {
 
 						var str = strarr[i];
 
@@ -469,40 +475,38 @@
 
 						// Greedy patterns can override/remove up to two previously matched tokens
 						if (!match && greedy && i != strarr.length - 1) {
-							// Reconstruct the original text using the next two tokens
-							var nextToken = strarr[i + 1].matchedStr || strarr[i + 1],
-							    combStr = str + nextToken;
-
-							if (i < strarr.length - 2) {
-								combStr += strarr[i + 2].matchedStr || strarr[i + 2];
-							}
-
-							// Try the pattern again on the reconstructed text
-							pattern.lastIndex = 0;
-							match = pattern.exec(combStr);
+							pattern.lastIndex = pos;
+							match = pattern.exec(text);
 							if (!match) {
-								continue;
+								break;
 							}
 
-							var from = match.index + (lookbehind ? match[1].length : 0);
-							// To be a valid candidate, the new match has to start inside of str
-							if (from >= str.length) {
+							var from = match.index + (lookbehind ? match[1].length : 0),
+							    to = match.index + match[0].length,
+							    k = i,
+							    p = pos;
+
+							for (var len = strarr.length; k < len && p < to; ++k) {
+								p += strarr[k].length;
+								// Move the index i to the element in strarr that is closest to from
+								if (from >= p) {
+									++i;
+									pos = p;
+								}
+							}
+
+							/*
+							 * If strarr[i] is a Token, then the match starts inside another Token, which is invalid
+							 * If strarr[k - 1] is greedy we are in conflict with another greedy pattern
+							 */
+							if (strarr[i] instanceof Token || strarr[k - 1].greedy) {
 								continue;
 							}
-							var to = match.index + match[0].length,
-							    len = str.length + nextToken.length;
 
 							// Number of tokens to delete and replace with the new match
-							delNum = 3;
-
-							if (to <= len) {
-								if (strarr[i + 1].greedy) {
-									continue;
-								}
-								delNum = 2;
-								combStr = combStr.slice(0, len);
-							}
-							str = combStr;
+							delNum = k - i;
+							str = text.slice(pos, p);
+							match.index -= pos;
 						}
 
 						if (!match) {
@@ -571,7 +575,7 @@
 		this.content = content;
 		this.alias = alias;
 		// Copy of the full string this token was created from
-		this.matchedStr = matchedStr || null;
+		this.length = (matchedStr || "").length|0;
 		this.greedy = !!greedy;
 	};
 
@@ -607,13 +611,11 @@
 
 		_.hooks.run('wrap', env);
 
-		var attributes = '';
+		var attributes = Object.keys(env.attributes).map(function(name) {
+			return name + '="' + (env.attributes[name] || '').replace(/"/g, '&quot;') + '"';
+		}).join(' ');
 
-		for (var name in env.attributes) {
-			attributes += (attributes ? ' ' : '') + name + '="' + (env.attributes[name] || '') + '"';
-		}
-
-		return '<' + env.tag + ' class="' + env.classes.join(' ') + '" ' + attributes + '>' + env.content + '</' + env.tag + '>';
+		return '<' + env.tag + ' class="' + env.classes.join(' ') + '"' + (attributes ? ' ' + attributes : '') + '>' + env.content + '</' + env.tag + '>';
 
 	};
 
@@ -646,7 +648,11 @@
 
 		if (document.addEventListener && !script.hasAttribute('data-manual')) {
 			if(document.readyState !== "loading") {
-				requestAnimationFrame(_.highlightAll, 0);
+				if (window.requestAnimationFrame) {
+					window.requestAnimationFrame(_.highlightAll);
+				} else {
+					window.setTimeout(_.highlightAll, 16);
+				}
 			}
 			else {
 				document.addEventListener('DOMContentLoaded', _.highlightAll);
@@ -675,10 +681,10 @@
 	Prism.languages.markup = {
 		'comment': /<!--[\w\W]*?-->/,
 		'prolog': /<\?[\w\W]+?\?>/,
-		'doctype': /<!DOCTYPE[\w\W]+?>/,
+		'doctype': /<!DOCTYPE[\w\W]+?>/i,
 		'cdata': /<!\[CDATA\[[\w\W]*?]]>/i,
 		'tag': {
-			pattern: /<\/?(?!\d)[^\s>\/=.$<]+(?:\s+[^\s>\/=]+(?:=(?:("|')(?:\\\1|\\?(?!\1)[\w\W])*\1|[^\s'">=]+))?)*\s*\/?>/i,
+			pattern: /<\/?(?!\d)[^\s>\/=$<]+(?:\s+[^\s>\/=]+(?:=(?:("|')(?:\\\1|\\?(?!\1)[\w\W])*\1|[^\s'">=]+))?)*\s*\/?>/i,
 			inside: {
 				'tag': {
 					pattern: /^<\/?[^\s>\/]+/i,
@@ -735,7 +741,10 @@
 		},
 		'url': /url\((?:(["'])(\\(?:\r\n|[\w\W])|(?!\1)[^\\\r\n])*\1|.*?)\)/i,
 		'selector': /[^\{\}\s][^\{\};]*?(?=\s*\{)/,
-		'string': /("|')(\\(?:\r\n|[\w\W])|(?!\1)[^\\\r\n])*\1/,
+		'string': {
+			pattern: /("|')(\\(?:\r\n|[\w\W])|(?!\1)[^\\\r\n])*\1/,
+			greedy: true
+		},
 		'property': /(\b|\B)[\w-]+(?=\s*:)/i,
 		'important': /\B!important\b/i,
 		'function': /[-a-z0-9]+(?=\()/i,
@@ -816,7 +825,8 @@
 		'keyword': /\b(as|async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|null|of|package|private|protected|public|return|set|static|super|switch|this|throw|try|typeof|var|void|while|with|yield)\b/,
 		'number': /\b-?(0x[\dA-Fa-f]+|0b[01]+|0o[0-7]+|\d*\.?\d+([Ee][+-]?\d+)?|NaN|Infinity)\b/,
 		// Allow for all non-ASCII characters (See http://stackoverflow.com/a/2008444)
-		'function': /[_$a-zA-Z\xA0-\uFFFF][_$a-zA-Z0-9\xA0-\uFFFF]*(?=\()/i
+		'function': /[_$a-zA-Z\xA0-\uFFFF][_$a-zA-Z0-9\xA0-\uFFFF]*(?=\()/i,
+		'operator': /--?|\+\+?|!=?=?|<=?|>=?|==?=?|&&?|\|\|?|\?|\*\*?|\/|~|\^|%|\.{3}/
 	});
 
 	Prism.languages.insertBefore('javascript', 'keyword', {
