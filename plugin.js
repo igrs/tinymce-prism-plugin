@@ -94,14 +94,12 @@
 	    var $ = editor.$;
 	    editor.on('PreProcess', function (e) {
 	      $('pre[contenteditable=false]', e.node).filter(_utils2.default.trimArg(_utils2.default.isCodeSample)).each(function (idx, elm) {
-	        var _this = this;
-
 	        var $elm = $(elm),
 	            code = elm.textContent;
 	        $elm.attr('class', $.trim($elm.attr('class')));
 	        $elm.removeAttr('contentEditable');
-	        $elm.empty().append($('<code></code>').each(function () {
-	          _this.textContent = code;
+	        $elm.empty().append($('<code></code>').each(function (_idx, code_tag) {
+	          code_tag.textContent = code;
 	        }));
 	      });
 	    });
